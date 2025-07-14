@@ -24,6 +24,7 @@ namespace Scripts.Enemy
         // Start is called before the first frame update
         void Start()
         {
+            player = GameObject.FindGameObjectWithTag("Player"); // Oyuncuyu bul
             // plane'in boyutunu al
             planeSize = plane.GetComponent<MeshRenderer>().bounds.size;
             InvokeRepeating("SpawnEnemy", 0f, 1f); // her saniyede bir SpawnEnemy fonksiyonunu çağır
