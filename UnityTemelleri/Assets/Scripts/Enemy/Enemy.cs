@@ -47,7 +47,7 @@ namespace Scripts.Enemy
         void Update()
         {
             if (target == null) return;
-            if (PlayerHealthManager.isPlayerDead) // Eğer oyuncu ölmüşse
+            if (GameManager.instance.isPlayerDead) // Eğer oyuncu ölmüşse
             {
                 StopAnimations(); // animasyonları durdur
                 return; // hiçbir şey yapma

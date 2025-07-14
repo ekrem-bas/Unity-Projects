@@ -8,8 +8,8 @@ public class SkillManager : MonoBehaviour
 {
     // Cursor'ı değiştirmek için kullanılacak
     public CursorManager cursorManager;
-    // herhangi bir skill tıklandı mı kontrolü
-    public bool skillClicked = false;
+    // // herhangi bir skill tıklandı mı kontrolü
+    // public bool skillClicked = false;
     // bu frame'de input consume edildi mi kontrolü
     public bool inputConsumedThisFrame = false;
     // seçilen skill'in indexi
@@ -35,25 +35,25 @@ public class SkillManager : MonoBehaviour
     }
     void LateUpdate()
     {
-        if (PlayerHealthManager.isPlayerDead)
+        if (GameManager.instance.isGameOverScreenActivated)
         {
-            // Eğer oyuncu ölmüşse skill seçimini engelle
-            skillClicked = false;
             selectedSkill = -1;
-            cursorManager.ResetCursor();
-            cursorManager.HideAreaIndicator();
-            return; // Hiçbir şey yapma
+            ResetSkill();
+            gameObject.SetActive(false);
+            return;
         }
-        // Her frame sonunda input consume flag'ini sıfırla
+
         inputConsumedThisFrame = false;
     }
 
     public void SelectSkill(int skillIndex)
     {
+        // Kullanıcı öldüyse skill seçemez
+        if (GameManager.instance.isPlayerDead) return;
         // eğer seçilen skill zaten tıklanmışşsa
         // ve yine aynı skill tıklanırsa
         // skill'i resetle
-        if (skillClicked && selectedSkill == skillIndex)
+        if (GameManager.instance.isSkillSelected && selectedSkill == skillIndex)
         {
             ResetSkill();
         }
@@ -63,14 +63,16 @@ public class SkillManager : MonoBehaviour
             selectedSkill = skillIndex;
             cursorManager.SetCustomCursor(skillIndex);
             // skill tıklandı olarak işaretle
-            skillClicked = true;
+            GameManager.instance.SetSkillSelected(true);
+            // skillClicked = true;
         }
     }
 
     public void ResetSkill()
     {
         // skill'i resetle
-        skillClicked = false;
+        // skillClicked = false;
+        GameManager.instance.SetSkillSelected(false);
         selectedSkill = -1;
         cursorManager.ResetCursor();
         cursorManager.HideAreaIndicator();

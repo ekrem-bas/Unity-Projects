@@ -13,7 +13,6 @@ namespace Scripts.Tower
         [SerializeField] private TowerPopupManager towerPopupManager; // Kule popup yöneticisi
         [SerializeField] CoinManager coinManager;
         [SerializeField] private LayerMask groundLayer; // Yere yerleştirme için kullanılacak layer
-        
         void Start()
         {
             cam = Camera.main; // Ana kamerayı al
@@ -29,12 +28,8 @@ namespace Scripts.Tower
                 RaycastHit hit; // Raycast sonucu için bir değişken
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
                 {
-                    // Sadece Ground tag'ına sahip yerlere kule yerleştir
-                    if (hit.collider.gameObject.CompareTag("Ground"))
-                    {
-                        Vector3 spawnPosition = hit.point + Vector3.up * 1.50f; // 0.5 birim yukarı
-                        towerPopupManager.Show(spawnPosition); // Popup'ı göster
-                    }
+                    Vector3 spawnPosition = hit.point + Vector3.up * 1.50f; // 0.5 birim yukarı
+                    towerPopupManager.Show(spawnPosition); // Popup'ı göster
                 }
             }
         }

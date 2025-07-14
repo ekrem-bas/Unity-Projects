@@ -15,6 +15,16 @@ public class CursorManager : MonoBehaviour
         hotspot = new Vector2(beamCursor.width / 2, beamCursor.height / 2);
     }
 
+    void LateUpdate()
+    {
+        if (GameManager.instance.isPlayerDead)
+        {
+            ResetCursor();
+            HideAreaIndicator();
+            return; // Hiçbir şey yapma
+        }
+    }
+
     void Update()
     {
         int currentSkill = skillManager.selectedSkill;
@@ -56,7 +66,7 @@ public class CursorManager : MonoBehaviour
                     {
                         Debug.Log("Beam skill hedefi bir düşman değil: " + hit.collider.name);
                         skillManager.ResetSkill(); // Eğer hedef düşman değilse skill'i resetle
-                        ResetCursor(); // Eğer hedef düşman değilse cursor'u resetle
+                        ResetCursor(); // Eğer hedef düşman değilse cursor'u resetle,
                     }
                 }
             }

@@ -33,12 +33,17 @@ namespace Scripts.Player
         // Update is called once per frame
         void Update()
         {
-            if (SkillManager.instance.skillClicked || SkillManager.instance.inputConsumedThisFrame) // Eğer bir skill tıklanmışsa veya input consume edildiyse
+            if (GameManager.instance.isSkillSelected) // Eğer bir skill tıklanmışsa veya input consume edildiyse
             {
                 return; // Hiçbir hareket işlemi yapma
             }
 
-            if (PlayerHealthManager.isPlayerDead) // Eğer oyuncu ölmüşse
+            if (SkillManager.instance.inputConsumedThisFrame)
+            {
+                return; // Eğer bu frame'de input consume edildiyse hareket etme
+            }
+            
+            if (GameManager.instance.isPlayerDead) // Eğer oyuncu ölmüşse
             {
                 agent.isStopped = true; // NavMeshAgent'i durdur
                 agent.velocity = Vector3.zero; // Hızını sıfırla

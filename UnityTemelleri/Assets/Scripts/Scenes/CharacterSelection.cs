@@ -68,6 +68,7 @@ public class CharacterSelection : MonoBehaviour
             return;
         }
         playerData.selectedCharacterPrefab = characterPrefabs[currentIndex]; // Seçilen karakteri PlayerData'ya ata
+        GameManager.instance.SetCharacterSelected(true); // Karakter seçildi olarak işaretle
         SceneManager.LoadScene("MainMenuScene"); // Menu sahnesine geç
     }
 }

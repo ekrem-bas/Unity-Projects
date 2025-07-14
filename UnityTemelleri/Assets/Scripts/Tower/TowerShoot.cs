@@ -18,7 +18,7 @@ namespace Scripts.Tower
 
         void Shoot()
         {
-            if (PlayerHealthManager.isPlayerDead)
+            if (GameManager.instance.isPlayerDead) // Eğer oyuncu ölmüşse
             {
                 CancelInvoke("Shoot"); // Oyuncu öldüyse atışı durdur
                 return;

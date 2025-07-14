@@ -5,14 +5,15 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public PlayerData playerData;
-    private static bool isGameStarted = false;
-    void Awake()
+    void Start()
     {
-        if (!isGameStarted)
+        if (!GameManager.instance.isCharacterSelected)
         {
-            isGameStarted = true;
             playerData.selectedCharacterPrefab = null;
         }
+        GameManager.instance.SetPlayerDead(false);
+        GameManager.instance.SetGameOverScreen(false);
+        GameManager.instance.SetSkillSelected(false);
     }
 
     public void PlayGame()
@@ -24,6 +25,7 @@ public class MainMenu : MonoBehaviour
         }
         else
         {
+            GameManager.instance.SetGameStarted(true); // Oyunu başlat
             SceneManager.LoadScene("GameScene");
         }
     }

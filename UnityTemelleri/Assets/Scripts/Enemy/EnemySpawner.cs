@@ -31,34 +31,37 @@ namespace Scripts.Enemy
 
         void SpawnEnemy()
         {
-            if (!PlayerHealthManager.isPlayerDead)
+            if (GameManager.instance.isPlayerDead || GameManager.instance.isGameOverScreenActivated)
             {
-                int randomIndex = Random.Range(0, enemyPrefabs.Length); // düşman prefab'larından rastgele birini seç
-                if (maxEnemyCount > 0)
-                { // Random olarak spawn edilecek pozisyonu belirle
-                    Vector3 spawnPosition;
-                    do
-                    {
-                        float x = Random.Range(-planeSize.x / 2, planeSize.x / 2);
-                        float z = Random.Range(-planeSize.z / 2, planeSize.z / 2);
-                        spawnPosition = new Vector3(
-                            plane.transform.position.x + x,
-                            1,
-                            plane.transform.position.z + z
-                        );
-                    } while (
-                        Vector3.Distance(spawnPosition, player.transform.position) < minSpawnDistance
-                        || Physics.OverlapSphere(spawnPosition, 2f, LayerMask.GetMask("Enemy")).Length > 0
-                        );
+                return; // Oyuncu öldüyse veya game over ekranı aktifse spawn etme
+            }
 
-                    // Quaternion.identity = nesnein rotasyonu olmadan varsayılan olarak oluşturulması
-                    Instantiate(enemyPrefabs[randomIndex], spawnPosition, Quaternion.identity);
-                    maxEnemyCount--;
-                }
-                else
+            int randomIndex = Random.Range(0, enemyPrefabs.Length); // düşman prefab'larından rastgele birini seç
+            if (maxEnemyCount > 0)
+            { // Random olarak spawn edilecek pozisyonu belirle
+                Vector3 spawnPosition;
+                do
                 {
-                    CancelInvoke("SpawnEnemy"); // düşman sayısı maksimuma ulaştığında SpawnEnemy fonksiyonunu durdur
-                }
+                    float x = Random.Range(-planeSize.x / 2, planeSize.x / 2);
+                    float z = Random.Range(-planeSize.z / 2, planeSize.z / 2);
+                    spawnPosition = new Vector3(
+                        plane.transform.position.x + x,
+                        1,
+                        plane.transform.position.z + z
+                    );
+                } while (
+                    Vector3.Distance(spawnPosition, player.transform.position) < minSpawnDistance
+                    || Physics.OverlapSphere(spawnPosition, 2f, LayerMask.GetMask("Enemy")).Length > 0
+                    );
+
+                // Quaternion.identity = nesnein rotasyonu olmadan varsayılan olarak oluşturulması
+                Instantiate(enemyPrefabs[randomIndex], spawnPosition, Quaternion.identity);
+                maxEnemyCount--;
+            }
+            else
+            {
+                CancelInvoke("SpawnEnemy"); // düşman sayısı maksimuma ulaştığında SpawnEnemy fonksiyonunu durdur
+
             }
         }
     }

@@ -15,14 +15,14 @@ public class GameOverScene : MonoBehaviour
 
     public void ShowGameOver()
     {
-        healthbarCanvas.SetActive(false); // Sağlık çubuğu panelini gizle
-        skillPanel.SetActive(false); // Skill panelini gizle
-        gameCoinText.enabled = false;
-        bloodImage.enabled = false;
+        // healthbarCanvas.SetActive(false); // Sağlık çubuğu panelini gizle
+        // skillPanel.SetActive(false); // Skill panelini gizle
+        // gameCoinText.enabled = false;
+        // bloodImage.enabled = false;
         int totalCoins = CoinManager.coinManagerInstance.coinCount;
         coinText.text = totalCoins.ToString();
         gameOverCanvas.gameObject.SetActive(true);
-        SkillManager.instance.ResetSkill(); // Skill'i resetle
+        // SkillManager.instance.ResetSkill(); // Skill'i resetle
     }
 
     public void MainMenu()

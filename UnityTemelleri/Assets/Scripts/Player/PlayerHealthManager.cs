@@ -9,12 +9,11 @@ public class PlayerHealthManager : MonoBehaviour
     public PlayerData playerData;
     public Healthbar healthbar; // Sağlık çubuğu scripti
     public Animator animator;
-    public static bool isPlayerDead = false; // Oyuncunun ölme durumu
     public GameObject deathEffect; // Ölüm efekti prefab'ı
     public GameObject bloodEffectPrefab;
     void Start()
     {
-        isPlayerDead = false; // Oyuncu başlangıçta ölmemiş
+        GameManager.instance.SetPlayerDead(false); // Oyuncu başlangıçta ölü değil
         animator = GetComponent<Animator>(); // Animator bileşenini al
         healthbar = FindObjectOfType<Healthbar>(); // Sağlık çubuğu scriptini bul
         if (healthbar == null)
@@ -28,8 +27,8 @@ public class PlayerHealthManager : MonoBehaviour
 
     public void Death()
     {
-        if (isPlayerDead) return;
-        isPlayerDead = true;
+        if (GameManager.instance.isPlayerDead) return;
+        GameManager.instance.SetPlayerDead(true); // Oyuncu ölü olarak işaretlendi
         deathEffect.SetActive(true); // Ölüm efekti prefab'ını etkinleştir
         animator.SetTrigger("Death");
     }
@@ -69,13 +68,16 @@ public class PlayerHealthManager : MonoBehaviour
         }
     }
 
-    private bool isGameOver = false;
+    // private bool isGameOver = false;
 
     public void DestroySelf()
     {
-        if (isGameOver) return;
-        isGameOver = true;
+        // if (isGameOver) return;
+        // isGameOver = true;
+        if (GameManager.instance.isGameOverScreenActivated) return;
+        GameManager.instance.SetGameOverScreen(true); // Game Over ekranını etkinleştir
         EndGame();
+        healthbar.gameObject.SetActive(false); // Sağlık çubuğunu gizle
     }
 
     public void EndGame()
