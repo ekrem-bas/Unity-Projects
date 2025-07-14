@@ -13,10 +13,11 @@ namespace Scripts.Tower
         [SerializeField] private TowerPopupManager towerPopupManager; // Kule popup yöneticisi
         [SerializeField] CoinManager coinManager;
         [SerializeField] private LayerMask groundLayer; // Yere yerleştirme için kullanılacak layer
+        [SerializeField] private GameObject currentTowerPlace;
         void Start()
         {
             cam = Camera.main; // Ana kamerayı al
-            groundLayer = LayerMask.GetMask("Ground"); // Ground layer'ını al
+            groundLayer = LayerMask.GetMask("TowerPlace"); // Ground layer'ını al
         }
 
         // Update is called once per frame
@@ -28,8 +29,19 @@ namespace Scripts.Tower
                 RaycastHit hit; // Raycast sonucu için bir değişken
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
                 {
+                    currentTowerPlace = hit.collider.gameObject; // TowerPlace objesini sakla
                     Vector3 spawnPosition = hit.point + Vector3.up * 1.50f; // 0.5 birim yukarı
                     towerPopupManager.Show(spawnPosition); // Popup'ı göster
+                }
+            }
+
+            // Sol tık ile popup'ı kapat (UI elementine tıklanmadıysa)
+            if (Input.GetMouseButtonDown(0))
+            {
+                // UI üzerinde mi kontrol et
+                if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                {
+                    towerPopupManager.Hide();
                 }
             }
         }
@@ -39,24 +51,32 @@ namespace Scripts.Tower
             GameObject prefab = towerPrefabs[towerIndex];
             TowerData towerData = towerDatas[towerIndex];
 
-            Vector3 boxSize = new Vector3(4f, 2f, 4f) * 0.5f; // BoxCollider'ın yarısı kadar (center to edge)
-            Collider[] colliders = Physics.OverlapBox(position, boxSize, Quaternion.identity, LayerMask.GetMask("Tower"));
-
+            // Seçilen TowerPlace'in merkezini kullan
+            Vector3 towerPlaceCenter = position;
+            if (currentTowerPlace != null)
+            {
+                towerPlaceCenter = currentTowerPlace.transform.position;
+                towerPlaceCenter.y += 1.50f;
+            }
+            // TowerPlace'in etrafında bir kutu oluştur ve collider'ları kontrol et
+            Vector3 boxSize = new Vector3(4f, 2f, 4f) * 0.5f;
+            // Collider'ları kontrol et
+            Collider[] colliders = Physics.OverlapBox(towerPlaceCenter, boxSize, Quaternion.identity, LayerMask.GetMask("Tower"));
+            // Eğer etrafta başka bir kule varsa, yerleştirme işlemini yapma
             if (colliders.Length > 0)
             {
                 Debug.Log("Burada zaten bir kule var!");
                 return;
             }
-
+            // Eğer yeterli coin varsa kuleyi yerleştir
             if (coinManager.coinCount >= towerData.price)
             {
-                // Kule prefab'ını belirtilen pozisyonda oluştur
-                Instantiate(prefab, position, Quaternion.identity);
-                coinManager.coinCount -= towerData.price; // Coin sayısını güncelle
+                Instantiate(prefab, towerPlaceCenter, Quaternion.identity);
+                coinManager.coinCount -= towerData.price;
             }
             else
             {
-                Debug.Log("Yeterli coin yok!"); // Yeterli coin yoksa uyarı ver
+                Debug.Log("Yeterli coin yok!");
             }
         }
     }

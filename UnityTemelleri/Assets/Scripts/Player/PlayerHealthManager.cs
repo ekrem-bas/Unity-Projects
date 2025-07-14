@@ -16,11 +16,6 @@ public class PlayerHealthManager : MonoBehaviour
         GameManager.instance.SetPlayerDead(false); // Oyuncu başlangıçta ölü değil
         animator = GetComponent<Animator>(); // Animator bileşenini al
         healthbar = FindObjectOfType<Healthbar>(); // Sağlık çubuğu scriptini bul
-        if (healthbar == null)
-        {
-            Debug.LogError("Healthbar script not found in the scene.");
-            return;
-        }
         playerData.health = playerData.maxHealth; // Oyuncunun canını maksimum can olarak ayarla
         healthbar.UpdateHealthbar(playerData.maxHealth, playerData.health); // Sağlık çubuğunu güncelle
     }
@@ -28,9 +23,9 @@ public class PlayerHealthManager : MonoBehaviour
     public void Death()
     {
         if (GameManager.instance.isPlayerDead) return;
-        GameManager.instance.SetPlayerDead(true); // Oyuncu ölü olarak işaretlendi
         deathEffect.SetActive(true); // Ölüm efekti prefab'ını etkinleştir
-        animator.SetTrigger("Death");
+        animator.SetBool("Death", true);
+        GameManager.instance.SetPlayerDead(true); // Oyuncu ölü olarak işaretlendi
     }
 
     private void OnTriggerEnter(Collider other)
@@ -68,12 +63,8 @@ public class PlayerHealthManager : MonoBehaviour
         }
     }
 
-    // private bool isGameOver = false;
-
     public void DestroySelf()
     {
-        // if (isGameOver) return;
-        // isGameOver = true;
         if (GameManager.instance.isGameOverScreenActivated) return;
         GameManager.instance.SetGameOverScreen(true); // Game Over ekranını etkinleştir
         EndGame();
@@ -83,6 +74,6 @@ public class PlayerHealthManager : MonoBehaviour
     public void EndGame()
     {
         GameOverScene gameOverScene = FindObjectOfType<GameOverScene>();
-        gameOverScene.ShowGameOver(); // GameOverScene scriptini bul ve göster
+        gameOverScene.ShowGameOver();
     }
 }
