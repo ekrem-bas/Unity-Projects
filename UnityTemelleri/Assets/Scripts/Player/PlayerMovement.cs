@@ -33,49 +33,41 @@ namespace Scripts.Player
         // Update is called once per frame
         void Update()
         {
-            if (GameManager.instance.isSkillSelected) // Eğer bir skill tıklanmışsa veya input consume edildiyse
+            if (GameManager.instance.isPlayerDead)
             {
-                return; // Hiçbir hareket işlemi yapma
+                agent.isStopped = true;
+                agent.velocity = Vector3.zero;
+                this.enabled = false;
+                this.GetComponent<EnemyDetector>().enabled = false;
+                return;
             }
 
-            if (SkillManager.instance.inputConsumedThisFrame)
+            // Skill seçiliyse input alma, ama animasyonu kontrol etmeye devam et
+            if (GameManager.instance.isSkillSelected || SkillManager.instance.inputConsumedThisFrame)
             {
-                return; // Eğer bu frame'de input consume edildiyse hareket etme
-            }
-            
-            if (GameManager.instance.isPlayerDead) // Eğer oyuncu ölmüşse
-            {
-                agent.isStopped = true; // NavMeshAgent'i durdur
-                agent.velocity = Vector3.zero; // Hızını sıfırla
-                this.enabled = false; // Bu scripti devre dışı bırak
-                this.GetComponent<EnemyDetector>().enabled = false; // EnemyDetector scriptini de devre dışı bırak
-                return; // Hiçbir şey yapma
-            }
-            else
-            {
-                if (agent != null)
+                // Hedefe ulaştıysa idle'a dön
+                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
                 {
-                    // Fare sol tusuna basildiginda ve UI elemanlari uzerinde degilse
-                    if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+                    anim.SetBool("isRunning", false);
+                }
+                return;
+            }
+
+            if (agent != null)
+            {
+                if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+                {
+                    Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hit;
+                    if (Physics.Raycast(ray, out hit))
                     {
-                        // Fare sol tusuna basildiginda fare konumunu al
-                        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-                        // RaycastHit yapisi ile raycast sonucunu tut
-                        RaycastHit hit;
-                        // Raycast ile fare konumundaki objeyi kontrol et
-                        // GroundLayerMask ile sadece "Ground" katmanındaki objelere bak
-                        if (Physics.Raycast(ray, out hit))
-                        {
-                            // NavMeshAgent'i hedef konuma hareket ettir
-                            agent.SetDestination(hit.point);
-                            anim.SetBool("isRunning", true); // Koşma animasyonunu başlat
-                        }
+                        agent.SetDestination(hit.point);
+                        anim.SetBool("isRunning", true);
                     }
-                    // Hedefe ulaştıysa idle'a dön
-                    if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-                    {
-                        anim.SetBool("isRunning", false); // Idle'a geç
-                    }
+                }
+                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+                {
+                    anim.SetBool("isRunning", false); // Idle'a geç
                 }
             }
         }
