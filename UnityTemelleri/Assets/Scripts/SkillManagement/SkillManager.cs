@@ -92,8 +92,9 @@ public class SkillManager : MonoBehaviour
     public void OnBeamTargetSelected(GameObject enemy)
     {
         Debug.Log("Beam hedefi: " + enemy.name);
-        // Beam prefab'ını instantiate et
-        Instantiate(beamPrefab, enemy.transform.position + Vector3.up * beamScript.beamStartHeight, Quaternion.identity);
+        GameObject beamObj = Instantiate(beamPrefab);
+        Beam beamScript = beamObj.GetComponent<Beam>();
+        beamScript.SetTarget(enemy.transform);
         ResetSkill();
     }
 }

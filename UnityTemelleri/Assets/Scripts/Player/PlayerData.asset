@@ -18,7 +18,7 @@ MonoBehaviour:
   - {fileID: 6530250335670728751, guid: 41ea072b148524677a4165afe870b08b, type: 3}
   selectedCharacterPrefab: {fileID: 7283644533227984201, guid: eb23094fa889b45fcaba095b9a6b1ff3, type: 3}
   maxHealth: 100
-  health: 20
+  health: 100
   speed: 5
   beamSkillDamage: 100
   meteorSkillDamage: 100

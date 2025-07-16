@@ -2951,6 +2951,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 744463791}
   m_CullTransparentMesh: 1
+--- !u!1 &756917856
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 756917858}
+  - component: {fileID: 756917857}
+  m_Layer: 0
+  m_Name: ObjectPooler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &756917857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756917856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df698e4f4fe344fe9043cc0e1edda5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  beamPrefab: {fileID: 5487104844379272152, guid: e16dc5c3a48de4f96b9defdaee1fe25d, type: 3}
+  meteorPrefab: {fileID: 3790137898518709661, guid: ea7f0a965d6dbfa4fb82fbf7494fb222, type: 3}
+--- !u!4 &756917858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756917856}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &763467134
 GameObject:
   m_ObjectHideFlags: 0
@@ -5564,3 +5610,4 @@ SceneRoots:
   - {fileID: 112867957}
   - {fileID: 980222577}
   - {fileID: 1193818974}
+  - {fileID: 756917858}
