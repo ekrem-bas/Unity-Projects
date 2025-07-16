@@ -43,7 +43,7 @@ public class PlayerHealthManager : MonoBehaviour
                 this.Death();
             }
             // Mermiyi yok et
-            Destroy(other.gameObject);
+            MagicPoolManager.Instance.magicPool.Release(other.GetComponent<Projectile>());
         }
         else if (other.CompareTag("Sword"))
         {

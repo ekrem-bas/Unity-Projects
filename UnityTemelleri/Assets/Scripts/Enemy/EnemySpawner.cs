@@ -56,13 +56,22 @@ namespace Scripts.Enemy
                     );
 
                 // Quaternion.identity = nesnein rotasyonu olmadan varsayılan olarak oluşturulması
-                Instantiate(enemyPrefabs[randomIndex], spawnPosition, Quaternion.identity);
+                // Pool'dan çek
+                Enemy enemy = EnemyPoolManager.Instance.enemyPools[randomIndex].Get();
+                enemy.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
+                enemy.gameObject.SetActive(true); // Düşmanı aktif et
+                enemy.healthbar.gameObject.SetActive(true);
+                enemy.health = Enemy.maxHealth; // Düşmanın canını maksimum can olarak ayarla
+                enemy.healthbar.UpdateHealthbar(Enemy.maxHealth, enemy.health);
+                enemy.poolIndex = randomIndex; // Hangi havuzdan geldiğini ayarla
+                enemy.target = player;
+                if (!EnemySpawner.allEnemies.Contains(enemy.gameObject))
+                    EnemySpawner.allEnemies.Add(enemy.gameObject);
                 maxEnemyCount--;
             }
             else
             {
                 CancelInvoke("SpawnEnemy"); // düşman sayısı maksimuma ulaştığında SpawnEnemy fonksiyonunu durdur
-
             }
         }
     }

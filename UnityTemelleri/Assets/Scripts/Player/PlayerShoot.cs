@@ -14,13 +14,16 @@ namespace Scripts.Player
 
         public void Shoot()
         {
-            shootTarget = GetComponent<EnemyDetector>().GetClosestEnemy(); // En yakın düşmanı al
-            // Eğer en yakın düşman yoksa atış yapma
+            shootTarget = GetComponent<EnemyDetector>().GetClosestEnemy();
             if (shootTarget == null)
-            {
                 return;
-            }
-            Projectile.Shoot(shootTarget, spawnPoint, bulletPrefab, playerBulletDamage, bulletSpeed); // Player damage ile mermi at
+
+            Projectile bullet = BulletPoolManager.Instance.bulletPool.Get();
+            bullet.transform.position = spawnPoint.position;
+            bullet.transform.rotation = spawnPoint.rotation;
+            Collider enemyCollider = shootTarget.GetComponent<Collider>();
+            Vector3 targetPoint = enemyCollider.bounds.center;
+            bullet.Init(targetPoint, playerBulletDamage, bulletSpeed, BulletPoolManager.Instance.bulletPool);
         }
     }
 }

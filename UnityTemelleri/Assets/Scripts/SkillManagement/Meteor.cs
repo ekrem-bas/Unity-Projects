@@ -7,14 +7,31 @@ public class Meteor : MonoBehaviour
 {
     public PlayerData playerData;
     public float meteorDamage;
-    public float fallSpeed = 50f; 
+    public float fallSpeed = 50f;
     public GameObject impactEffect;
     public GameObject impactEffectInstance;
     public float meteorFallStartHeight = 30f;
-    void Start()
+    private Rigidbody rb;
+    private ObjectPooler<Meteor> pooler;
+
+    void Awake()
     {
+        rb = GetComponent<Rigidbody>();
+    }
+
+    public void Init(Vector3 spawnPosition, ObjectPooler<Meteor> pooler)
+    {
+        this.pooler = pooler;
+        transform.position = spawnPosition;
         meteorDamage = playerData.meteorSkillDamage;
-        GetComponent<Rigidbody>().velocity = Vector3.down * fallSpeed;
+
+        // Rigidbody'yi sıfırla ve doğru hızda düşür
+        if (rb != null)
+        {
+            rb.velocity = Vector3.zero;
+            rb.isKinematic = false;
+            rb.velocity = Vector3.down * fallSpeed;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -35,9 +52,19 @@ public class Meteor : MonoBehaviour
                     }
                 }
             }
-            impactEffectInstance = Instantiate(impactEffect, transform.position, Quaternion.identity); // Etki efekti oluştur
-            Destroy(gameObject);
+
+            impactEffectInstance = Instantiate(impactEffect, transform.position, Quaternion.identity);
             Destroy(impactEffectInstance, 1f);
+            pooler.Release(this); // Pool'a geri gönder
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (rb != null)
+        {
+            rb.velocity = Vector3.zero;
+            rb.isKinematic = true;
         }
     }
 }

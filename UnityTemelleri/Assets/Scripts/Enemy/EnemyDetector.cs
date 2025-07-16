@@ -34,13 +34,15 @@ namespace Scripts.Enemy
             GameObject closest = EnemySpawner.allEnemies[0];
             float closestDistance = Mathf.Infinity; // En yakın mesafe başlangıçta sonsuz olarak ayarlanır
 
-            foreach (GameObject enemy in EnemySpawner.allEnemies)
+            foreach (GameObject enemyObj in EnemySpawner.allEnemies)
             {
-                float distance = Vector3.Distance(transform.position, enemy.transform.position); // Düşman ile bu nesne arasındaki mesafeyi hesapla
+                Enemy enemy = enemyObj.GetComponent<Enemy>();
+                if (enemy.health <= 0) continue;
+                float distance = Vector3.Distance(transform.position, enemyObj.transform.position); // Düşman ile bu nesne arasındaki mesafeyi hesapla
                 if (distance < closestDistance) // Eğer bu düşman daha yakınsa
                 {
                     closestDistance = distance; // En yakın mesafeyi güncelle
-                    closest = enemy; // En yakın düşmanı güncelle
+                    closest = enemyObj; // En yakın düşmanı güncelle
                 }
             }
             return closest;

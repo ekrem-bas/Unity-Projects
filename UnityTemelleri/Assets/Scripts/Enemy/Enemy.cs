@@ -23,6 +23,7 @@ namespace Scripts.Enemy
         public float health = maxHealth; // düşmanın şu anki canı
         public Animator animator; // düşmanın animasyonlarını kontrol etmek için
         public float attackRange = 2f;
+        public int poolIndex;
 
         // coin manager
         private CoinManager coinManager;
@@ -113,7 +114,7 @@ namespace Scripts.Enemy
 
         public void DestroySelf()
         {
-            Destroy(gameObject); // düşmanı yok et
+            EnemyPoolManager.Instance.enemyPools[poolIndex].Release(this); // Pool'a geri gönder
         }
 
         public Transform magicSpanwPoint;
@@ -124,21 +125,33 @@ namespace Scripts.Enemy
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player == null) return;
-
-            Projectile.Shoot(player, magicSpanwPoint, magicPrefab, magicDamage, magicSpeed);
+            Projectile magic = MagicPoolManager.Instance.magicPool.Get();
+            magic.transform.position = magicSpanwPoint.position;
+            magic.transform.rotation = magicSpanwPoint.rotation;
+            magic.Init(player.GetComponent<Collider>().bounds.center, magicDamage, magicSpeed, MagicPoolManager.Instance.magicPool);
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Bullet"))
             {
-                this.TakeDamage(other.GetComponent<Projectile>().damage); // Mermiden hasar al
-                Destroy(other.gameObject); // Mermiyi yok et
+                Projectile projectile = other.GetComponent<Projectile>();
+                if (projectile != null)
+                {
+                    this.TakeDamage(projectile.damage); // Mermiden hasar al
+                    // Projectile'ın kendi pooler'ını kullan
+                    if (projectile.pooler != null)
+                        projectile.pooler.Release(projectile);
+                }
             }
 
             if (other.CompareTag("Magic"))
             {
-                Destroy(other.gameObject); // Magic item yok et
+                Projectile projectile = other.GetComponent<Projectile>();
+                if (projectile != null && projectile.pooler != null)
+                {
+                    projectile.pooler.Release(projectile);
+                }
             }
         }
 

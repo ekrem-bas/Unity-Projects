@@ -83,18 +83,20 @@ public class SkillManager : MonoBehaviour
     // Meteor düşünce ne olacağının fonksiyonu
     public void OnMeteorAreaSelected(Vector3 position)
     {
-        Debug.Log("Meteor düşecek pozisyon: " + position);
-        Instantiate(meteorPrefab, position + (Vector3.up * meteorScript.meteorFallStartHeight), Quaternion.identity);
+        Meteor meteor = SkillPoolManager.Instance.meteorPool.Get();
+
+        // Meteor'u yukarıdan düşür - Y koordinatını yükseltin!
+        Vector3 spawnPosition = new Vector3(position.x, position.y + meteorScript.meteorFallStartHeight, position.z);
+        meteor.Init(spawnPosition, SkillPoolManager.Instance.meteorPool);
+
         ResetSkill();
     }
 
     // Beam skill hedef seçildiğinde ne olacağı
     public void OnBeamTargetSelected(GameObject enemy)
     {
-        Debug.Log("Beam hedefi: " + enemy.name);
-        GameObject beamObj = Instantiate(beamPrefab);
-        Beam beamScript = beamObj.GetComponent<Beam>();
-        beamScript.SetTarget(enemy.transform);
+        Beam beam = SkillPoolManager.Instance.beamPool.Get();
+        beam.SetTarget(enemy.transform);
         ResetSkill();
     }
 }

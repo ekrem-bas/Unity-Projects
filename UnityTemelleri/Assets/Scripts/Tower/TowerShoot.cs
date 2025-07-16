@@ -32,8 +32,10 @@ namespace Scripts.Tower
             {
                 return;
             }
-
-            Projectile.Shoot(shootTarget, spawnPoint, bulletPrefab, towerData.damage, towerData.bulletSpeed); // Tower damage ile mermi at
+            Projectile bullet = TowerBulletPoolManager.Instance.towerBulletPool.Get();
+            bullet.transform.position = spawnPoint.position;
+            bullet.transform.rotation = spawnPoint.rotation;
+            bullet.Init(shootTarget.GetComponent<Collider>().bounds.center, towerData.damage, towerData.bulletSpeed, TowerBulletPoolManager.Instance.towerBulletPool);
         }
     }
 }

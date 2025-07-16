@@ -2,44 +2,57 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+
 public class Projectile : MonoBehaviour
 {
-    public float damage; // Mermi hasarı
+    public float damage;
     public GameObject bloodEffectPrefab;
+    private Rigidbody rb;
+    private float timer;
+    private float lifeTime = 7f;
+    public ObjectPooler<Projectile> pooler; // Public yap ki Enemy erişebilsin
 
-    public static void Shoot(GameObject target, Transform bulletSpawnPoint, GameObject bulletPrefab, float damage = 50f, float speed = 20f, float lifetime = 7f)
+    private void Awake()
     {
-        if (target == null || bulletPrefab == null || bulletSpawnPoint == null) return;
+        rb = GetComponent<Rigidbody>();
+    }
 
-        // Hedefe doğru yön hesapla
-        Collider targetCollider = target.GetComponent<Collider>();
-        Vector3 direction = (targetCollider.bounds.center - bulletSpawnPoint.transform.position).normalized;
+    public void Init(Vector3 targetPosition, float damage, float speed, ObjectPooler<Projectile> pooler)
+    {
+        this.damage = damage;
+        this.pooler = pooler;
+        timer = 0f;
 
-        // Bullet'ın hedefe doğru bakması için rotation hesapla
-        // Eğer bullet'ın ucu Z ekseni ise (normal):
-        Quaternion bulletRotation = Quaternion.LookRotation(direction);
+        if (rb != null)
+        {
+            rb.isKinematic = false;  // Önce kinematic'i kapat
+            rb.velocity = Vector3.zero;  // Sonra velocity'yi sıfırla
 
-        // Mermi prefabını hedefe doğru bakan rotation ile oluştur
-        GameObject bullet = Object.Instantiate(bulletPrefab, bulletSpawnPoint.transform.position, bulletRotation);
+            // Hedef pozisyona doğru direction hesapla
+            Vector3 direction = (targetPosition - transform.position).normalized;
+            rb.AddForce(direction * speed, ForceMode.Impulse);
+        }
 
-        bullet.GetComponent<Projectile>().damage = damage; // Merminin hasarını ayarla
+        var trail = GetComponent<TrailRenderer>();
+        if (trail != null) trail.Clear();
 
-        // Merminin Rigidbody bileşenini al
-        Rigidbody rb = bullet.GetComponent<Rigidbody>();
-        rb.isKinematic = false;
-        rb.AddForce(direction * speed, ForceMode.Impulse); // Mermiyi hedefe doğru it
+        gameObject.SetActive(true);
+    }
 
-        // Mermiyi belirli bir süre sonra yok et
-        Object.Destroy(bullet, lifetime);
+    private void Update()
+    {
+        timer += Time.deltaTime;
+        if (timer >= lifeTime)
+        {
+            pooler.Release(this);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Enemy") || other.CompareTag("Player"))
         {
             Vector3 hitPoint = other.ClosestPoint(transform.position);
-
-            // Merminin geliş yönünü bul
             Vector3 forward = transform.forward;
             Quaternion rotation = Quaternion.LookRotation(-forward);
 
@@ -47,7 +60,16 @@ public class Projectile : MonoBehaviour
             {
                 Instantiate(bloodEffectPrefab, hitPoint, rotation);
             }
-            Destroy(gameObject);
+            pooler.Release(this); // Destroy yerine pool'a geri gönder
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (rb != null)
+        {
+            rb.velocity = Vector3.zero;
+            rb.isKinematic = true;
         }
     }
 }

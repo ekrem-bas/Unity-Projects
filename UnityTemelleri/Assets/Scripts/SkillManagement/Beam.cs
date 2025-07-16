@@ -42,7 +42,7 @@ public class Beam : MonoBehaviour
         {
             Enemy enemy = other.GetComponent<Enemy>();
             enemy.TakeDamage(beamDamage);
-            Destroy(gameObject);
+            SkillPoolManager.Instance.beamPool.Release(this); // Pool’a geri gönder
         }
     }
 }
